@@ -1,36 +1,129 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DengueGuard – Smart Dengue Prevention & Management System
+### BSc in Computer Science & Engineering — Final Year Capstone Project
 
-## Getting Started
+**DengueGuard** is a full-stack, enterprise-grade healthcare SaaS web application engineered to address epidemic dengue outbreaks through real-time surveillance, clinical symptom triage, verified hospital bed tracking, and privacy-preserving blood/platelet donor discovery.
 
-First, run the development server:
+---
 
+## 🌟 Key Features
+
+1. **Public Health Portal**:
+   - **Interactive Symptom Evaluator**: Staged triage assessment based on illness day, warning signs (abdominal pain, mucosal bleeding, persistent vomiting), and CBC platelet levels.
+   - **Hospital & Bed Locator**: Geo-enabled Leaflet map with real-time dengue general bed and ICU counts.
+   - **Privacy-Preserving Blood Donor Network**: Connects verified donors without exposing telephone numbers to public scrapers.
+   - **Epidemiological Surveillance**: Interactive Recharts tracking monthly caseloads, district comparisons, and clinical hemodynamic curves.
+   - **Dengue Awareness & Myths vs Facts**: Educational modules in alignment with WHO and DGHS Bangladesh guidelines.
+
+2. **Patient Dashboard (`/patient`)**:
+   - Daily body temperature and symptom logger.
+   - Platelet count & CBC laboratory tracking with interactive recovery charts.
+   - Critical thrombocytopenia alerts (<50,000/μL).
+   - Doctor consultation booking and follow-up notes inbox.
+
+3. **Doctor Dashboard (`/doctor`)**:
+   - Appointment request queue with Accept/Decline workflows.
+   - Authorized patient health record inspection (longitudinal CBC reports).
+   - Follow-up instructions and clinical guidance desk.
+
+4. **Administrator Command Center (`/admin`)**:
+   - Platform metrics overview (Patients, Doctors, Hospitals, Reports).
+   - Doctor verification desk (BMDC registration checks).
+   - Hospital and donor management.
+   - Security and compliance audit log viewer.
+
+---
+
+## 🛠 Technology Stack
+
+- **Framework**: Next.js 16 (App Router) + TypeScript
+- **Styling**: Tailwind CSS + shadcn/ui primitives
+- **Icons**: Lucide React
+- **Animations**: Framer Motion
+- **Database & ODM**: MongoDB + Mongoose (with cached singleton connection)
+- **Authentication**: JWT Sessions + Salted Bcrypt Hashing + Role-Based Access Control (RBAC)
+- **Data Visualization**: Recharts (Dynamic Responsive SVG)
+- **Geospatial & Maps**: Leaflet + OpenStreetMap (SSR-safe dynamic loading)
+- **Validation**: Zod schema validation
+
+---
+
+## 🚀 Quick Start Guide
+
+### 1. Clone & Install Dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/your-username/dengu.git
+cd dengu
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Configure Environment Variables
+Copy `.env.example` to `.env.local`:
+```bash
+cp .env.example .env.local
+```
+Ensure your MongoDB connection string is set in `.env.local`:
+```env
+MONGODB_URI=mongodb://localhost:27017/dengueguard
+JWT_SECRET=super-secret-dengueguard-jwt-token-key-change-in-production-2025
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Initialize / Seed the Database
+Run the development server:
+```bash
+npm run dev
+```
+Visit `http://localhost:3000/api/seed` in your browser (or click **"Initialize Seed DB"** on the admin console) to automatically populate initial verified doctors, patients, hospitals, donors, and surveillance data.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## 🔑 Demo Login Credentials (For Evaluation & Defense)
 
-To learn more about Next.js, take a look at the following resources:
+| Role | Email | Password | Dashboard Route |
+| :--- | :--- | :--- | :--- |
+| **Administrator** | `admin@dengueguard.org` | `Admin@DengueGuard2025!` | `/admin` |
+| **Doctor** | `doctor@dengueguard.org` | `Doctor@DengueGuard2025!` | `/doctor` |
+| **Patient** | `patient@dengueguard.org` | `Patient@DengueGuard2025!` | `/patient` |
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+*(Note: The login page includes 1-click credential auto-fill buttons for rapid review).*
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## 🧪 Security & Logic Test Suite
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Run the built-in automated test suite:
+- Endpoint: `http://localhost:3000/api/tests`
+- Verifies: Password hashing, JWT claims, Zod validation, and clinical triage rules.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📂 Project Structure
+
+```
+dengu/
+├── app/
+│   ├── (auth)/             # Login, Register, Forgot Password
+│   ├── (dashboard)/        # Role-based Dashboards (patient, doctor, admin)
+│   ├── (public)/           # Public Pages (home, awareness, symptoms, prevention, hospitals, donors, stats)
+│   └── api/                # RESTful API Route Handlers
+├── components/
+│   ├── common/             # Navbar, Footer, EmergencyBanner, MedicalDisclaimer
+│   ├── dashboard/          # Dashboard Header, Sidebar, StatCards
+│   ├── maps/               # Leaflet HospitalMap component
+│   └── ui/                 # Reusable UI primitives (Button, Card, Badge, Input)
+├── lib/
+│   ├── auth/               # JWT token utilities & RBAC middleware
+│   ├── constants/          # Bangladesh districts, hotlines, blood groups
+│   ├── data/               # Seed & mock datasets
+│   ├── db/                 # Mongoose connection & database seed script
+│   └── test-suite.ts       # Security & logic verification test suite
+├── models/                 # 11 Mongoose Data Models with indexes & validation
+├── validations/            # Zod validation schemas
+├── types/                  # TypeScript interface definitions
+└── docs/                   # Thesis documentation & deployment guides
+```
+
+---
+
+## ⚖️ Clinical Disclaimer
+
+DengueGuard provides automated triage decision-support and surveillance intelligence for educational and assistive purposes only. It does NOT formulate definitive clinical diagnoses or prescribe medication. In the event of emergency warning signs (fever >103°F, persistent vomiting, severe abdominal pain, or mucosal bleeding), patients must immediately seek accredited hospital emergency care.

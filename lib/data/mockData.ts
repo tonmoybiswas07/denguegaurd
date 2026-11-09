@@ -1,0 +1,395 @@
+export interface HospitalItem {
+  id: string;
+  name: string;
+  district: string;
+  area: string;
+  type: "Government" | "Private" | "Specialized";
+  phone: string;
+  emergencyPhone: string;
+  address: string;
+  totalBeds: number;
+  availableDengueBeds: number;
+  icuTotal: number;
+  icuAvailable: number;
+  hasDedicatedDengueUnit: boolean;
+  isVerified: boolean;
+  lat: number;
+  lng: number;
+}
+
+export interface BloodDonorItem {
+  id: string;
+  name: string; // Displayed with partial privacy e.g. "Ahmed R."
+  bloodGroup: string;
+  district: string;
+  area: string;
+  isAvailable: boolean;
+  isPlateletDonor: boolean; // Apheresis eligible
+  lastDonationDate: string;
+  totalDonations: number;
+  verificationStatus: "Verified" | "Pending";
+}
+
+export interface HealthNotice {
+  id: string;
+  title: string;
+  date: string;
+  category: "Alert" | "Advisory" | "Guideline";
+  summary: string;
+  source: string;
+}
+
+export const MOCK_NOTICES: HealthNotice[] = [
+  {
+    id: "n-1",
+    title: "DGHS Issues Updated National Dengue Clinical Management Guidelines (5th Edition)",
+    date: "November 2024",
+    category: "Guideline",
+    summary: "Revises fluid management protocols during the critical 24-48 hour plasma leakage phase and warns strictly against NSAID usage.",
+    source: "Directorate General of Health Services (DGHS)",
+  },
+  {
+    id: "n-2",
+    title: "Post-Monsoon Dengue Vector Surveillance in Urban Hotspots",
+    date: "October 2024",
+    category: "Alert",
+    summary: "High Breteau Index detected in Dhaka North and Chattogram commercial zones. Special larviciding drives initiated.",
+    source: "IEDCR Vector Control Wing",
+  },
+  {
+    id: "n-3",
+    title: "Platelet Transfusion Rational Guidelines for Severe Dengue",
+    date: "September 2024",
+    category: "Advisory",
+    summary: "Routine prophylactic platelet transfusion is NOT recommended unless active bleeding is present or platelet count falls below 10,000-20,000/μL.",
+    source: "WHO South-East Asia Regional Office",
+  },
+];
+
+export const MOCK_HOSPITALS: HospitalItem[] = [
+  {
+    id: "h-1",
+    name: "Dhaka Medical College & Hospital (DMCH)",
+    district: "Dhaka",
+    area: "Bakshibazar",
+    type: "Government",
+    phone: "+880 2-55165088",
+    emergencyPhone: "16263",
+    address: "Secretariat Road, Ramna, Dhaka 1000",
+    totalBeds: 2600,
+    availableDengueBeds: 45,
+    icuTotal: 30,
+    icuAvailable: 3,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.7258,
+    lng: 90.3976,
+  },
+  {
+    id: "h-2",
+    name: "Mugdha Medical College & Hospital",
+    district: "Dhaka",
+    area: "Mugda",
+    type: "Specialized",
+    phone: "+880 2-7278272",
+    emergencyPhone: "16263",
+    address: "Mugda Stadium Road, Dhaka 1214",
+    totalBeds: 500,
+    availableDengueBeds: 32,
+    icuTotal: 14,
+    icuAvailable: 2,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.7291,
+    lng: 90.4316,
+  },
+  {
+    id: "h-3",
+    name: "Sir Salimullah Medical College & Mitford Hospital",
+    district: "Dhaka",
+    area: "Old Dhaka",
+    type: "Government",
+    phone: "+880 2-7319002",
+    emergencyPhone: "16263",
+    address: "Mitford Road, Babubazar, Dhaka 1100",
+    totalBeds: 900,
+    availableDengueBeds: 18,
+    icuTotal: 10,
+    icuAvailable: 1,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.7107,
+    lng: 90.4022,
+  },
+  {
+    id: "h-4",
+    name: "Kurmitola General Hospital",
+    district: "Dhaka",
+    area: "Dhaka Cantonment",
+    type: "Government",
+    phone: "+880 2-8711234",
+    emergencyPhone: "16263",
+    address: "Airport Road, Cantonment, Dhaka 1206",
+    totalBeds: 500,
+    availableDengueBeds: 24,
+    icuTotal: 12,
+    icuAvailable: 4,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.8242,
+    lng: 90.4042,
+  },
+  {
+    id: "h-5",
+    name: "Chattogram Medical College Hospital (CMCH)",
+    district: "Chattogram",
+    area: "Panchlaish",
+    type: "Government",
+    phone: "+880 31-616382",
+    emergencyPhone: "16263",
+    address: "57 K.B. Fazlul Kader Road, Chattogram 4203",
+    totalBeds: 1313,
+    availableDengueBeds: 28,
+    icuTotal: 16,
+    icuAvailable: 2,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 22.3592,
+    lng: 91.8286,
+  },
+  {
+    id: "h-6",
+    name: "Rajshahi Medical College Hospital (RMCH)",
+    district: "Rajshahi",
+    area: "Rajpara",
+    type: "Government",
+    phone: "+880 721-772150",
+    emergencyPhone: "16263",
+    address: "Laxmipur, Rajpara, Rajshahi 6000",
+    totalBeds: 1200,
+    availableDengueBeds: 35,
+    icuTotal: 15,
+    icuAvailable: 3,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 24.3705,
+    lng: 88.5833,
+  },
+  {
+    id: "h-7",
+    name: "Khulna Medical College Hospital (KMCH)",
+    district: "Khulna",
+    area: "Boyra",
+    type: "Government",
+    phone: "+880 41-760350",
+    emergencyPhone: "16263",
+    address: "Boyra Main Road, Khulna 9000",
+    totalBeds: 500,
+    availableDengueBeds: 15,
+    icuTotal: 10,
+    icuAvailable: 1,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 22.8456,
+    lng: 89.5403,
+  },
+  {
+    id: "h-8",
+    name: "Barishal Sher-e-Bangla Medical College Hospital (SBMCH)",
+    district: "Barishal",
+    area: "Band Road",
+    type: "Government",
+    phone: "+880 431-217354",
+    emergencyPhone: "16263",
+    address: "Band Road, Barishal 8200",
+    totalBeds: 1000,
+    availableDengueBeds: 20,
+    icuTotal: 10,
+    icuAvailable: 2,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 22.6954,
+    lng: 90.3644,
+  },
+  {
+    id: "h-9",
+    name: "Square Hospital Ltd.",
+    district: "Dhaka",
+    area: "Panthapath",
+    type: "Private",
+    phone: "+880 2-8159457",
+    emergencyPhone: "10616",
+    address: "18/F Bir Uttam Qazi Nuruzzaman Sarak, Panthapath, Dhaka 1205",
+    totalBeds: 400,
+    availableDengueBeds: 12,
+    icuTotal: 25,
+    icuAvailable: 5,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.7534,
+    lng: 90.3842,
+  },
+  {
+    id: "h-10",
+    name: "Evercare Hospital Dhaka",
+    district: "Dhaka",
+    area: "Bashundhara R/A",
+    type: "Private",
+    phone: "+880 2-8431661",
+    emergencyPhone: "10678",
+    address: "Plot 81, Block E, Bashundhara R/A, Dhaka 1229",
+    totalBeds: 425,
+    availableDengueBeds: 14,
+    icuTotal: 30,
+    icuAvailable: 6,
+    hasDedicatedDengueUnit: true,
+    isVerified: true,
+    lat: 23.8103,
+    lng: 90.4312,
+  },
+];
+
+export const MOCK_DONORS: BloodDonorItem[] = [
+  {
+    id: "d-1",
+    name: "Tanvir H.",
+    bloodGroup: "O+",
+    district: "Dhaka",
+    area: "Dhanmondi",
+    isAvailable: true,
+    isPlateletDonor: true,
+    lastDonationDate: "2024-08-15",
+    totalDonations: 8,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-2",
+    name: "Nusrat J.",
+    bloodGroup: "A+",
+    district: "Dhaka",
+    area: "Mirpur-10",
+    isAvailable: true,
+    isPlateletDonor: false,
+    lastDonationDate: "2024-07-20",
+    totalDonations: 4,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-3",
+    name: "Kamrul I.",
+    bloodGroup: "B+",
+    district: "Dhaka",
+    area: "Uttara",
+    isAvailable: true,
+    isPlateletDonor: true,
+    lastDonationDate: "2024-09-02",
+    totalDonations: 12,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-4",
+    name: "Farhan A.",
+    bloodGroup: "AB+",
+    district: "Chattogram",
+    area: "Agrabad",
+    isAvailable: true,
+    isPlateletDonor: true,
+    lastDonationDate: "2024-08-01",
+    totalDonations: 6,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-5",
+    name: "Shakil M.",
+    bloodGroup: "O-",
+    district: "Dhaka",
+    area: "Mohakhali",
+    isAvailable: true,
+    isPlateletDonor: true,
+    lastDonationDate: "2024-06-10",
+    totalDonations: 9,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-6",
+    name: "Tahmina K.",
+    bloodGroup: "A-",
+    district: "Rajshahi",
+    area: "Boalia",
+    isAvailable: false,
+    isPlateletDonor: false,
+    lastDonationDate: "2024-10-12",
+    totalDonations: 3,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-7",
+    name: "Mahfuz R.",
+    bloodGroup: "B-",
+    district: "Khulna",
+    area: "Sonadanga",
+    isAvailable: true,
+    isPlateletDonor: false,
+    lastDonationDate: "2024-08-28",
+    totalDonations: 5,
+    verificationStatus: "Verified",
+  },
+  {
+    id: "d-8",
+    name: "Sadia B.",
+    bloodGroup: "AB-",
+    district: "Barishal",
+    area: "Kotwali",
+    isAvailable: true,
+    isPlateletDonor: true,
+    lastDonationDate: "2024-07-04",
+    totalDonations: 7,
+    verificationStatus: "Verified",
+  },
+];
+
+export const MOCK_STATISTICS = {
+  lastUpdated: "November 2024",
+  dataSource: "DGHS National Dengue Surveillance Bulletin (Clearly Labeled Demo/Simulated Epidemiological Data)",
+  nationalOverview: {
+    totalCasesThisYear: 98450,
+    totalRecovered: 96800,
+    activeHospitalized: 1140,
+    caseFatalityRate: "0.51%",
+  },
+  monthlyTrends: [
+    { month: "Jan", cases: 1055, hospitalized: 320 },
+    { month: "Feb", cases: 339, hospitalized: 110 },
+    { month: "Mar", cases: 311, hospitalized: 95 },
+    { month: "Apr", cases: 504, hospitalized: 140 },
+    { month: "May", cases: 644, hospitalized: 180 },
+    { month: "Jun", cases: 798, hospitalized: 230 },
+    { month: "Jul", cases: 2669, hospitalized: 890 },
+    { month: "Aug", cases: 6521, hospitalized: 2150 },
+    { month: "Sep", cases: 18097, hospitalized: 5800 },
+    { month: "Oct", cases: 30879, hospitalized: 9400 },
+    { month: "Nov", cases: 28410, hospitalized: 8200 },
+  ],
+  districtComparison: [
+    { district: "Dhaka (North & South)", cases: 48920, hospitalized: 620, risk: "High" },
+    { district: "Chattogram", cases: 14210, hospitalized: 180, risk: "High" },
+    { district: "Barishal", cases: 9840, hospitalized: 110, risk: "Moderate" },
+    { district: "Khulna", cases: 7230, hospitalized: 85, risk: "Moderate" },
+    { district: "Rajshahi", cases: 5120, hospitalized: 55, risk: "Low" },
+    { district: "Mymensingh", cases: 4410, hospitalized: 42, risk: "Low" },
+    { district: "Rangpur", cases: 3680, hospitalized: 30, risk: "Low" },
+    { district: "Sylhet", cases: 2140, hospitalized: 18, risk: "Low" },
+  ],
+  clinicalPhaseCurve: [
+    { day: "Day 1", temp: 104.0, platelets: 240, phase: "Febrile Phase" },
+    { day: "Day 2", temp: 103.8, platelets: 210, phase: "Febrile Phase" },
+    { day: "Day 3", temp: 103.2, platelets: 165, phase: "Febrile Phase" },
+    { day: "Day 4", temp: 100.5, platelets: 110, phase: "Critical Phase (Plasma Leak)" },
+    { day: "Day 5", temp: 99.0, platelets: 65, phase: "Critical Phase (Plasma Leak)" },
+    { day: "Day 6", temp: 98.6, platelets: 42, phase: "Critical Phase (Plasma Leak)" },
+    { day: "Day 7", temp: 98.4, platelets: 78, phase: "Recovery Phase" },
+    { day: "Day 8", temp: 98.6, platelets: 135, phase: "Recovery Phase" },
+    { day: "Day 9", temp: 98.6, platelets: 195, phase: "Recovery Phase" },
+  ],
+};
+
