@@ -20,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import MedicalDisclaimer from "@/components/common/MedicalDisclaimer";
+import DengueSeverityPredictor from "@/components/medical/DengueSeverityPredictor";
 
 interface AssessmentState {
   ageGroup: "child" | "adult" | "senior";
@@ -588,6 +589,11 @@ export default function SymptomsPage() {
           </div>
         </div>
       )}
+
+      {/* AI / CLINICAL SEVERITY & PLASMA LEAKAGE PREDICTOR */}
+      <div className="pt-10 border-t border-slate-200/80">
+        <DengueSeverityPredictor />
+      </div>
     </div>
   );
 }

@@ -16,6 +16,8 @@ import {
   ShieldAlert,
   Send,
   User,
+  Printer,
+  Sparkles,
 } from "lucide-react";
 import {
   LineChart,
@@ -30,12 +32,15 @@ import {
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import PatientReportPDF from "@/components/dashboard/PatientReportPDF";
+import DengueSeverityPredictor from "@/components/medical/DengueSeverityPredictor";
 
 export default function PatientDashboardPage() {
   const [records, setRecords] = useState<any[]>([]);
   const [appointments, setAppointments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   // Form states
   const [tempInput, setTempInput] = useState("101.5");
@@ -148,13 +153,24 @@ export default function PatientDashboardPage() {
           </p>
         </div>
 
-        <Button
-          onClick={() => setIsModalOpen(true)}
-          className="bg-teal-600 hover:bg-teal-700 text-white font-bold gap-2 self-start sm:self-auto shadow-sm"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Log Daily Vitals / CBC</span>
-        </Button>
+        <div className="flex flex-wrap items-center gap-2.5 self-start sm:self-auto">
+          <Button
+            onClick={() => setIsReportModalOpen(true)}
+            variant="outline"
+            className="border-slate-300 hover:bg-slate-100 text-slate-800 font-bold gap-2 shadow-2xs h-10 px-4 rounded-xl text-xs"
+          >
+            <Printer className="w-4 h-4 text-teal-600" />
+            <span>Print Clinical Summary (PDF)</span>
+          </Button>
+
+          <Button
+            onClick={() => setIsModalOpen(true)}
+            className="bg-teal-600 hover:bg-teal-700 text-white font-bold gap-2 shadow-sm h-10 px-4 rounded-xl text-xs"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Log Daily Vitals / CBC</span>
+          </Button>
+        </div>
       </div>
 
       {/* Critical Platelet Warning if < 50,000 */}
@@ -367,6 +383,21 @@ export default function PatientDashboardPage() {
           )}
         </div>
       </Card>
+
+      {/* AI / ML CLINICAL SEVERITY & PLASMA LEAKAGE PREDICTOR */}
+      <div className="pt-4">
+        <DengueSeverityPredictor />
+      </div>
+
+      {/* PRINTABLE PDF CLINICAL REPORT MODAL */}
+      <PatientReportPDF
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        patientName="Verified Patient"
+        patientEmail="patient@dengueguard.org"
+        records={records}
+        appointments={appointments}
+      />
 
       {/* LOG VITALS MODAL */}
       {isModalOpen && (
