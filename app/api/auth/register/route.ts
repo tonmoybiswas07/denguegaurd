@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db/connect";
 import { User, PatientProfile, DoctorProfile, AuditLog } from "@/models";
-import { signToken, setAuthCookie } from "@/lib/auth/jwt";
+import { getJwtSecret, signToken, setAuthCookie } from "@/lib/auth/jwt";
 
 export async function POST(req: NextRequest) {
   try {
@@ -25,6 +25,7 @@ export async function POST(req: NextRequest) {
 
     const assignedRole = role === "doctor" ? "doctor" : "patient";
 
+    getJwtSecret();
     await connectDB();
 
     // Check if email already registered
@@ -93,9 +94,9 @@ export async function POST(req: NextRequest) {
         role: user.role,
       },
     });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: error.message || "Registration failed." },
+      { success: false, error: "Registration is temporarily unavailable." },
       { status: 500 }
     );
   }

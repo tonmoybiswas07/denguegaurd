@@ -12,6 +12,7 @@ import {
   PhoneCall,
   ExternalLink,
 } from "lucide-react";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import type { UserRole } from "@/types";
@@ -22,11 +23,13 @@ interface DashboardHeaderProps {
     email: string;
     role: UserRole;
   };
+  sidebarOpen?: boolean;
   onToggleSidebar?: () => void;
 }
 
 export default function DashboardHeader({
   user,
+  sidebarOpen,
   onToggleSidebar,
 }: DashboardHeaderProps) {
   const router = useRouter();
@@ -55,7 +58,9 @@ export default function DashboardHeader({
           <button
             onClick={onToggleSidebar}
             className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 lg:hidden"
-            aria-label="Toggle Navigation"
+            aria-label="Toggle navigation"
+            aria-controls="dashboard-sidebar"
+            aria-expanded={sidebarOpen}
           >
             <Menu className="w-5 h-5" />
           </button>
@@ -78,7 +83,8 @@ export default function DashboardHeader({
       </div>
 
       {/* Right: Quick Emergency / Actions / User / Logout */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <ThemeToggle />
         <a
           href="tel:16263"
           className="hidden md:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-teal-50 border border-teal-200 text-teal-800 text-xs font-semibold hover:bg-teal-100 transition-colors"

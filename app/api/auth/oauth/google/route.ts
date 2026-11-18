@@ -4,6 +4,10 @@ import { User, PatientProfile, AuditLog } from "@/models";
 import { signToken, setAuthCookie } from "@/lib/auth/jwt";
 
 export async function GET(req: NextRequest) {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ success: false, error: "Not found." }, { status: 404 });
+  }
+
   const clientId = process.env.GOOGLE_CLIENT_ID;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
   const redirectUri = `${appUrl}/api/auth/oauth/google/callback`;
@@ -43,11 +47,16 @@ export async function GET(req: NextRequest) {
       });
     }
 
+    if (user.deactivatedAt) {
+      return NextResponse.redirect(new URL("/login?error=oauth_failed", req.url));
+    }
+
     const token = signToken({
       id: user._id.toString(),
       name: user.name,
       email: user.email,
       role: user.role,
+      sessionVersion: user.sessionVersion,
       avatarUrl: user.avatarUrl,
     });
 

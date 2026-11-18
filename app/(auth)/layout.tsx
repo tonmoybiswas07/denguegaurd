@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import {
   Shield,
   ArrowLeft,
@@ -156,15 +157,18 @@ export default function AuthLayout({
             <span>Back to Public Portal</span>
           </Link>
 
-          {/* Mobile Brand Preview */}
-          <Link href="/" className="flex items-center gap-2 lg:hidden">
-            <div className="w-7 h-7 rounded-lg bg-[#0f2744] text-teal-400 flex items-center justify-center">
-              <Shield className="w-3.5 h-3.5 fill-teal-400/20" />
-            </div>
-            <span className="font-bold text-[#0f2744] text-sm tracking-tight">
-              Dengue<span className="text-teal-600">Guard</span>
-            </span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <ThemeToggle />
+            {/* Mobile Brand Preview */}
+            <Link href="/" className="flex items-center gap-2 lg:hidden">
+              <div className="w-7 h-7 rounded-lg bg-[#0f2744] text-teal-400 flex items-center justify-center">
+                <Shield className="w-3.5 h-3.5 fill-teal-400/20" />
+              </div>
+              <span className="font-bold text-[#0f2744] text-sm tracking-tight">
+                Dengue<span className="text-teal-600">Guard</span>
+              </span>
+            </Link>
+          </div>
         </div>
 
         {/* Dynamic Form Area */}

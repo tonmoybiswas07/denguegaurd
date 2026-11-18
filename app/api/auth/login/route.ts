@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import bcrypt from "bcryptjs";
 import { connectDB } from "@/lib/db/connect";
 import { User, AuditLog } from "@/models";
-import { signToken, setAuthCookie } from "@/lib/auth/jwt";
+import { getJwtSecret, signToken, setAuthCookie } from "@/lib/auth/jwt";
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,11 +15,12 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    getJwtSecret();
     await connectDB();
 
     // Query user and select password hash
     const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
-    if (!user) {
+    if (!user || user.deactivatedAt) {
       return NextResponse.json(
         { success: false, error: "Invalid email or password credentials." },
         { status: 401 }
@@ -48,6 +49,7 @@ export async function POST(req: NextRequest) {
       name: user.name,
       email: user.email,
       role: user.role,
+      sessionVersion: user.sessionVersion,
       avatarUrl: user.avatarUrl,
     });
 
@@ -72,9 +74,9 @@ export async function POST(req: NextRequest) {
         avatarUrl: user.avatarUrl,
       },
     });
-  } catch (error: any) {
+  } catch {
     return NextResponse.json(
-      { success: false, error: error.message || "Sign in failed." },
+      { success: false, error: "Sign in is temporarily unavailable." },
       { status: 500 }
     );
   }

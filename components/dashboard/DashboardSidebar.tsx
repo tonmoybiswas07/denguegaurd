@@ -56,6 +56,8 @@ export default function DashboardSidebar({
 
   const adminNav = [
     { label: "Command Center", href: "/admin", icon: BarChart3 },
+    { label: "Manage Accounts", href: "/admin/accounts", icon: Settings },
+    { label: "Patients", href: "/admin/patients", icon: Users },
     { label: "Doctor Verifications", href: "/admin/doctors", icon: Stethoscope },
     { label: "Dengue Case Reports", href: "/admin/reports", icon: AlertTriangle },
     { label: "Donor verification", href: "/admin/management", icon: Hospital },
@@ -67,20 +69,22 @@ export default function DashboardSidebar({
 
   return (
     <aside
+      id="dashboard-sidebar"
       className={cn(
-        "w-64 bg-slate-900 text-slate-300 flex flex-col shrink-0 border-r border-slate-800 transition-all",
+        "w-64 bg-[var(--dashboard-sidebar)] text-slate-300 flex flex-col shrink-0 border-r border-white/10 transition-all",
         "fixed inset-y-0 left-0 z-40 lg:static lg:translate-x-0",
-        isOpen ? "translate-x-0" : "-translate-x-full"
+        isOpen ? "translate-x-0" : "invisible -translate-x-full lg:visible"
       )}
     >
       {/* Sidebar Top Header */}
       <div className="h-16 flex items-center justify-between px-6 border-b border-slate-800">
-        <span className="text-xs font-bold uppercase tracking-wider text-teal-400">
+        <span className="text-xs font-bold uppercase tracking-wider text-[var(--dashboard-highlight)]">
           Navigation Menu
         </span>
         {onClose && (
           <button
             onClick={onClose}
+            aria-label="Close navigation"
             className="lg:hidden text-slate-400 hover:text-white"
           >
             ✕
@@ -91,7 +95,7 @@ export default function DashboardSidebar({
       {/* Nav List */}
       <nav className="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href.endsWith("/patients") && pathname.startsWith(`${item.href}/`));
           const Icon = item.icon;
           return (
             <Link
@@ -101,12 +105,12 @@ export default function DashboardSidebar({
               className={cn(
                 "flex items-center justify-between px-3.5 py-2.5 rounded-lg text-xs font-semibold transition-colors",
                 isActive
-                  ? "bg-teal-600 text-white shadow-sm"
+                  ? "bg-white/15 text-white shadow-sm"
                   : "text-slate-400 hover:text-white hover:bg-slate-800/80"
               )}
             >
               <div className="flex items-center gap-3">
-                <Icon className={cn("w-4 h-4", isActive ? "text-white" : "text-teal-400")} />
+                <Icon className={cn("w-4 h-4", isActive ? "text-white" : "text-[var(--dashboard-highlight)]")} />
                 <span>{item.label}</span>
               </div>
               {isActive && <ChevronRight className="w-3.5 h-3.5 opacity-80" />}
@@ -123,7 +127,7 @@ export default function DashboardSidebar({
         </p>
         <a
           href="tel:16263"
-          className="inline-block text-teal-400 font-bold text-xs hover:underline"
+          className="inline-block text-[var(--dashboard-highlight)] font-bold text-xs hover:underline"
         >
           Call 16263 Immediately
         </a>

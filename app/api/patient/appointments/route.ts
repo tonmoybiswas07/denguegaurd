@@ -1,3 +1,4 @@
+import { isObjectIdOrHexString } from "mongoose";
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/jwt";
 import { connectDB } from "@/lib/db/connect";
@@ -38,6 +39,13 @@ export async function POST(req: NextRequest) {
     }
 
     await connectDB();
+    if (typeof doctorId !== "string" || !isObjectIdOrHexString(doctorId) || !await User.exists({
+      _id: doctorId,
+      role: "doctor",
+      deactivatedAt: null,
+    })) {
+      return NextResponse.json({ success: false, error: "This doctor is unavailable." }, { status: 400 });
+    }
     const appointment = await Appointment.create({
       patientId: session.id,
       doctorId,

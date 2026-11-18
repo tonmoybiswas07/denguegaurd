@@ -154,20 +154,21 @@ export default function StatisticsPage() {
         <div className="w-full h-80 pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-              <XAxis dataKey="month" stroke="#64748b" fontSize={12} tickLine={false} />
-              <YAxis stroke="#64748b" fontSize={12} tickLine={false} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+              <XAxis dataKey="month" stroke="var(--chart-label)" fontSize={12} tickLine={false} />
+              <YAxis stroke="var(--chart-label)" fontSize={12} tickLine={false} />
               <Tooltip
+                labelStyle={{ color: "var(--foreground)" }}
                 contentStyle={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--surface)",
                   borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
+                  border: "1px solid var(--border)",
                   fontSize: "12px",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
-              <Bar dataKey="cases" name="Total Reported Cases" fill="#0d9488" radius={[4, 4, 0, 0]} />
-              <Bar dataKey="hospitalized" name="Severe Hospitalizations" fill="#0f2744" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="cases" name="Total Reported Cases" fill="var(--chart-teal)" radius={[4, 4, 0, 0]} />
+              <Bar dataKey="hospitalized" name="Severe Hospitalizations" fill="var(--chart-blue)" radius={[4, 4, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -188,21 +189,22 @@ export default function StatisticsPage() {
         <div className="w-full h-80 pt-4">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={MOCK_STATISTICS.clinicalPhaseCurve} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-              <XAxis dataKey="day" stroke="#64748b" fontSize={12} />
-              <YAxis yAxisId="left" stroke="#dc2626" fontSize={12} domain={[96, 106]} label={{ value: "Temp (°F)", angle: -90, position: "insideLeft", fill: "#dc2626", fontSize: 10 }} />
-              <YAxis yAxisId="right" orientation="right" stroke="#0d9488" fontSize={12} domain={[0, 300]} label={{ value: "Platelets (x1000/μL)", angle: 90, position: "insideRight", fill: "#0d9488", fontSize: 10 }} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+              <XAxis dataKey="day" stroke="var(--chart-label)" fontSize={12} />
+              <YAxis yAxisId="left" stroke="var(--chart-red)" fontSize={12} domain={[96, 106]} label={{ value: "Temp (°F)", angle: -90, position: "insideLeft", fill: "var(--chart-red)", fontSize: 10 }} />
+              <YAxis yAxisId="right" orientation="right" stroke="var(--chart-teal)" fontSize={12} domain={[0, 300]} label={{ value: "Platelets (x1000/μL)", angle: 90, position: "insideRight", fill: "var(--chart-teal)", fontSize: 10 }} />
               <Tooltip
+                labelStyle={{ color: "var(--foreground)" }}
                 contentStyle={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--surface)",
                   borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
+                  border: "1px solid var(--border)",
                   fontSize: "12px",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "12px", paddingTop: "10px" }} />
-              <Line yAxisId="left" type="monotone" dataKey="temp" name="Body Temperature (°F)" stroke="#dc2626" strokeWidth={2.5} dot={{ r: 4 }} />
-              <Line yAxisId="right" type="monotone" dataKey="platelets" name="Platelet Count (k/μL)" stroke="#0d9488" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line yAxisId="left" type="monotone" dataKey="temp" name="Body Temperature (°F)" stroke="var(--chart-red)" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line yAxisId="right" type="monotone" dataKey="platelets" name="Platelet Count (k/μL)" stroke="var(--chart-teal)" strokeWidth={2.5} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

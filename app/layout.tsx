@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { initializeTheme } from "@/lib/theme";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -22,8 +23,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col font-sans bg-slate-50 text-slate-900 antialiased selection:bg-teal-500 selection:text-white">
+    <html lang="en" className="h-full antialiased" suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: initializeTheme }} />
+      </head>
+      <body className="min-h-full flex flex-col font-sans antialiased selection:bg-teal-500 selection:text-white">
         {children}
       </body>
     </html>

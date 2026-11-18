@@ -291,7 +291,7 @@ export default function RegisterPage() {
       </form>
 
       {/* Social Auth */}
-      {role === "patient" && <SocialAuthButtons />}
+      {process.env.NODE_ENV !== "production" && role === "patient" && <SocialAuthButtons />}
 
       {/* Bottom Switcher */}
       <div className="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">

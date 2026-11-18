@@ -1,9 +1,15 @@
 @import "tailwindcss";
 @import "leaflet/dist/leaflet.css";
+@import "./dark-mode.css" screen;
 
 :root {
   --background: #f8fafc;
   --foreground: #0f172a;
+  --surface: #ffffff;
+  --chart-label: #64748b;
+  --chart-red: #dc2626;
+  --chart-teal: #0d9488;
+  --chart-blue: #0f2744;
 
   --navy-deep: #0f2744;
   --navy-light: #16365c;
@@ -105,7 +111,7 @@ body {
 }
 
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid #0f766e;
+  outline: 2px solid var(--focus-color, #0f766e);
   outline-offset: 3px;
 }
 
@@ -113,4 +119,26 @@ body {
   html {
     scroll-behavior: auto;
   }
+}
+
+.dashboard-shell {
+  background-color: var(--dashboard-background);
+}
+
+.dashboard-shell[data-dashboard-role="admin"] {
+  --dashboard-sidebar: #222044;
+  --dashboard-highlight: #c7c7ff;
+  --dashboard-background: #f6f5fc;
+}
+
+.dashboard-shell[data-dashboard-role="doctor"] {
+  --dashboard-sidebar: #132e48;
+  --dashboard-highlight: #9bd6ff;
+  --dashboard-background: #f2f7fc;
+}
+
+.dashboard-shell[data-dashboard-role="patient"] {
+  --dashboard-sidebar: #103c35;
+  --dashboard-highlight: #a0e8ce;
+  --dashboard-background: #f1f8f5;
 }

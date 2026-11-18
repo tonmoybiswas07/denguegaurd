@@ -1,5 +1,4 @@
 # DengueGuard – Smart Dengue Prevention & Management System
-### BSc in Computer Science & Engineering — Final Year Capstone Project
 
 **DengueGuard** is a full-stack, enterprise-grade healthcare SaaS web application engineered to address epidemic dengue outbreaks through real-time surveillance, clinical symptom triage, verified hospital bed tracking, and privacy-preserving blood/platelet donor discovery.
 
@@ -72,7 +71,7 @@ Run the development server:
 ```bash
 npm run dev
 ```
-Visit `http://localhost:3000/api/seed` in your browser (or click **"Initialize Seed DB"** on the admin console) to automatically populate initial verified doctors, patients, hospitals, donors, and surveillance data.
+For local demos, visit `http://localhost:3000/api/seed` to populate sample accounts and data. For a hosted installation, follow the [deployment guide](docs/DEPLOYMENT.md).
 
 ---
 
@@ -84,7 +83,7 @@ Visit `http://localhost:3000/api/seed` in your browser (or click **"Initialize S
 | **Doctor** | `doctor@dengueguard.org` | `Doctor@DengueGuard2025!` | `/doctor` |
 | **Patient** | `patient@dengueguard.org` | `Patient@DengueGuard2025!` | `/patient` |
 
-*(Note: The login page includes 1-click credential auto-fill buttons for rapid review).*
+These accounts are created by local demo seeding.
 
 ---
 

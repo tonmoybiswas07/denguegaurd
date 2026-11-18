@@ -18,6 +18,7 @@ import {
   PhoneCall,
   ShieldAlert,
 } from "lucide-react";
+import ThemeToggle from "@/components/common/ThemeToggle";
 import { NAV_LINKS } from "@/lib/constants";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -55,7 +56,7 @@ export default function Navbar() {
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2">
           {/* Logo & Brand Identity */}
           <Link
             href="/"
@@ -98,34 +99,38 @@ export default function Navbar() {
             })}
           </nav>
 
-          {/* Right Action Buttons */}
-          <div className="hidden sm:flex items-center gap-2.5">
-            <Link href="/symptoms" className={cn(buttonVariants({ size: "sm" }), "bg-teal-800 hover:bg-teal-900 gap-2")}>
-              <AlertCircle aria-hidden="true" className="size-4" />
-              Check symptoms
-            </Link>
-            <Link href="/login" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-2")}>
-              <LogIn aria-hidden="true" className="size-4 text-teal-800" />
-              Sign in
-            </Link>
-          </div>
+          <div className="flex shrink-0 items-center gap-2">
+            {/* Right Action Buttons */}
+            <div className="hidden sm:flex items-center gap-2.5">
+              <Link href="/symptoms" className={cn(buttonVariants({ size: "sm" }), "bg-teal-800 hover:bg-teal-900 gap-2")}>
+                <AlertCircle aria-hidden="true" className="size-4" />
+                Check symptoms
+              </Link>
+              <Link href="/login" className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-2")}>
+                <LogIn aria-hidden="true" className="size-4 text-teal-800" />
+                Sign in
+              </Link>
+            </div>
 
-          {/* Mobile Menu Trigger */}
-          <div className="flex xl:hidden items-center gap-2">
-            <Link href="/symptoms" aria-label="Check symptoms" onClick={() => setMobileMenuOpen(false)} className="sm:hidden p-3 rounded-xl bg-teal-50 text-teal-800 border border-teal-200">
-              <AlertCircle aria-hidden="true" className="w-4 h-4" />
-            </Link>
+            <ThemeToggle />
 
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-3 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200/80"
-              aria-label="Toggle navigation menu"
-              id="nav-toggle"
-              aria-expanded={mobileMenuOpen}
-              aria-controls="mobile-navigation"
-            >
-              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-            </button>
+            {/* Mobile Menu Trigger */}
+            <div className="flex xl:hidden items-center gap-2">
+              <Link href="/symptoms" aria-label="Check symptoms" onClick={() => setMobileMenuOpen(false)} className="hidden min-[400px]:inline-flex sm:hidden p-3 rounded-xl bg-teal-50 text-teal-800 border border-teal-200">
+                <AlertCircle aria-hidden="true" className="w-4 h-4" />
+              </Link>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-3 rounded-xl text-slate-700 hover:bg-slate-100 transition-colors border border-slate-200/80"
+                aria-label="Toggle navigation menu"
+                id="nav-toggle"
+                aria-expanded={mobileMenuOpen}
+                aria-controls="mobile-navigation"
+              >
+                {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              </button>
+            </div>
           </div>
         </div>
       </div>

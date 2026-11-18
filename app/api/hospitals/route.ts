@@ -20,6 +20,9 @@ export async function GET(req: NextRequest) {
       lat: location?.coordinates?.[1],
     }));
   } catch {
+    if (process.env.NODE_ENV === "production") {
+      return NextResponse.json({ success: false, error: "The directory is temporarily unavailable." }, { status: 503 });
+    }
     source = "demo";
     hospitals = MOCK_HOSPITALS;
   }

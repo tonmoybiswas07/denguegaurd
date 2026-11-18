@@ -142,14 +142,13 @@ export default function PatientDashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Banner / Welcome */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="grid gap-5 rounded-[2rem] border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-6 lg:grid-cols-[1fr_auto] lg:items-center lg:p-8">
         <div>
-          <Badge variant="teal">PATIENT CARE CONSOLE</Badge>
           <h1 className="text-2xl sm:text-3xl font-black text-[#0f2744] mt-1">
-            Personal Health & Platelet Tracker
+            My health
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Log your daily fever and CBC laboratory markers. Only you and authorized physicians can review these records.
+            Track your symptoms, daily vitals, and CBC results in one place.
           </p>
         </div>
 
@@ -160,7 +159,7 @@ export default function PatientDashboardPage() {
             className="border-slate-300 hover:bg-slate-100 text-slate-800 font-bold gap-2 shadow-2xs h-10 px-4 rounded-xl text-xs"
           >
             <Printer className="w-4 h-4 text-teal-600" />
-            <span>Print Clinical Summary (PDF)</span>
+            <span>Print summary</span>
           </Button>
 
           <Button
@@ -168,7 +167,7 @@ export default function PatientDashboardPage() {
             className="bg-teal-600 hover:bg-teal-700 text-white font-bold gap-2 shadow-sm h-10 px-4 rounded-xl text-xs"
           >
             <Plus className="w-4 h-4" />
-            <span>Log Daily Vitals / CBC</span>
+            <span>Log vitals and CBC</span>
           </Button>
         </div>
       </div>
@@ -265,21 +264,22 @@ export default function PatientDashboardPage() {
         <div className="w-full h-72 pt-2">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={chartData} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-              <XAxis dataKey="time" stroke="#64748b" fontSize={11} />
-              <YAxis yAxisId="left" stroke="#dc2626" fontSize={11} domain={[96, 105]} />
-              <YAxis yAxisId="right" orientation="right" stroke="#0d9488" fontSize={11} domain={[0, 300]} />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+              <XAxis dataKey="time" stroke="var(--chart-label)" fontSize={11} />
+              <YAxis yAxisId="left" stroke="var(--chart-red)" fontSize={11} domain={[96, 105]} />
+              <YAxis yAxisId="right" orientation="right" stroke="var(--chart-teal)" fontSize={11} domain={[0, 300]} />
               <Tooltip
+                labelStyle={{ color: "var(--foreground)" }}
                 contentStyle={{
-                  backgroundColor: "#ffffff",
+                  backgroundColor: "var(--surface)",
                   borderRadius: "8px",
-                  border: "1px solid #cbd5e1",
+                  border: "1px solid var(--border)",
                   fontSize: "12px",
                 }}
               />
               <Legend wrapperStyle={{ fontSize: "11px", paddingTop: "8px" }} />
-              <Line yAxisId="left" type="monotone" dataKey="temperature" name="Temp (°F)" stroke="#dc2626" strokeWidth={2.5} dot={{ r: 4 }} />
-              <Line yAxisId="right" type="monotone" dataKey="platelets" name="Platelets (x1000/μL)" stroke="#0d9488" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line yAxisId="left" type="monotone" dataKey="temperature" name="Temp (°F)" stroke="var(--chart-red)" strokeWidth={2.5} dot={{ r: 4 }} />
+              <Line yAxisId="right" type="monotone" dataKey="platelets" name="Platelets (x1000/μL)" stroke="var(--chart-teal)" strokeWidth={2.5} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>

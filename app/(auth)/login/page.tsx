@@ -164,7 +164,7 @@ export default function LoginPage() {
       </form>
 
       {/* Social Auth (Google / GitHub) */}
-      <SocialAuthButtons />
+      {process.env.NODE_ENV !== "production" && <SocialAuthButtons />}
 
       {/* Bottom Switcher */}
       <div className="pt-2 border-t border-slate-100 text-center text-xs text-slate-500">

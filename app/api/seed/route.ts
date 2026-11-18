@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { seedDatabase } from "@/lib/db/seed";
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ success: false, error: "Not found." }, { status: 404 });
+  }
+
   try {
     const result = await seedDatabase();
     return NextResponse.json(result);

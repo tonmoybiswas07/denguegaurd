@@ -4,6 +4,10 @@ import { User, PatientProfile, AuditLog } from "@/models";
 import { signToken, setAuthCookie } from "@/lib/auth/jwt";
 
 export async function GET(req: NextRequest) {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ success: false, error: "Not found." }, { status: 404 });
+  }
+
   const { searchParams } = new URL(req.url);
   const code = searchParams.get("code");
   const error = searchParams.get("error");
@@ -73,11 +77,16 @@ export async function GET(req: NextRequest) {
     }
 
     // 4. Sign JWT session token
+    if (user.deactivatedAt) {
+      return NextResponse.redirect(new URL("/login?error=oauth_failed", req.url));
+    }
+
     const token = signToken({
       id: user._id.toString(),
       name: user.name,
       email: user.email,
       role: user.role,
+      sessionVersion: user.sessionVersion,
       avatarUrl: user.avatarUrl,
     });
 

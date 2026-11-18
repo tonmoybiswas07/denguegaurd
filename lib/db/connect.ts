@@ -18,21 +18,23 @@ if (!cached) {
   cached = global.mongooseCache = { conn: null, promise: null };
 }
 
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/dengueguard";
-
 export async function connectDB(): Promise<typeof mongoose> {
   if (cached.conn) {
     return cached.conn;
   }
 
   if (!cached.promise) {
+    const uri = process.env.MONGODB_URI?.trim();
+    if (!uri && process.env.NODE_ENV === "production") {
+      throw new Error("MONGODB_URI is required in production.");
+    }
     const opts = {
       bufferCommands: false,
       maxPoolSize: 10,
       serverSelectionTimeoutMS: 5000,
     };
 
-    cached.promise = mongoose.connect(MONGODB_URI, opts).then((mongooseInstance) => {
+    cached.promise = mongoose.connect(uri || "mongodb://localhost:27017/dengueguard", opts).then((mongooseInstance) => {
       return mongooseInstance;
     });
   }

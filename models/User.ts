@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document, Model } from "mongoose";
+import mongoose, { Schema, type Document, type Model } from "mongoose";
 
 export interface IUser extends Document {
   name: string;
@@ -8,6 +8,8 @@ export interface IUser extends Document {
   phone?: string;
   avatarUrl?: string;
   isVerified: boolean;
+  deactivatedAt?: Date;
+  sessionVersion?: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -49,6 +51,8 @@ const UserSchema = new Schema<IUser>(
       type: String,
       default: "",
     },
+    deactivatedAt: Date,
+    sessionVersion: { type: Number, default: 0 },
     isVerified: {
       type: Boolean,
       default: false,

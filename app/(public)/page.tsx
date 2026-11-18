@@ -18,7 +18,7 @@ export default function HomePage() {
             <p className="mb-5 flex items-center gap-2 text-sm font-semibold text-teal-200"><MapPin aria-hidden="true" size={17} /> Dengue care in Bangladesh</p>
             <h1 className="max-w-xl text-5xl font-bold leading-[1.06] tracking-tight sm:text-6xl">Know the signs.<br /><span className="text-teal-200">Find care faster.</span></h1>
             <p className="mt-5 max-w-md text-base leading-relaxed text-slate-200 sm:text-lg">Check symptoms, find a hospital, and learn how to protect your household from dengue.</p>
-            <Link href="/symptoms" className="mt-8 inline-flex min-h-12 items-center gap-3 rounded-xl bg-teal-200 px-5 font-bold text-slate-950 hover:bg-teal-100">
+            <Link href="/symptoms" className="mt-8 inline-flex min-h-12 items-center gap-3 rounded-xl bg-teal-200 px-5 font-bold text-[#132622] hover:bg-teal-300">
               Check symptoms <ArrowRight aria-hidden="true" size={18} />
             </Link>
           </div>

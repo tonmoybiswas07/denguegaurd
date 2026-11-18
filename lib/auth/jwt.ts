@@ -1,8 +1,20 @@
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { cache } from "react";
+import { isObjectIdOrHexString } from "mongoose";
+import { connectDB } from "@/lib/db/connect";
+import User from "@/models/User";
 import type { UserRole, UserSession } from "@/types";
 
-const JWT_SECRET = process.env.JWT_SECRET || "super-secret-dengueguard-jwt-token-key-change-in-production-2025";
+const DEVELOPMENT_SECRET = "super-secret-dengueguard-jwt-token-key-change-in-production-2025";
+
+export function getJwtSecret() {
+  const secret = process.env.JWT_SECRET?.trim();
+  if (process.env.NODE_ENV === "production" && (!secret || secret.length < 32 || secret === DEVELOPMENT_SECRET)) {
+    throw new Error("A unique JWT_SECRET of at least 32 characters is required in production.");
+  }
+  return secret || DEVELOPMENT_SECRET;
+}
 const AUTH_COOKIE_NAME = "dengueguard_session";
 const TOKEN_EXPIRY = "7d";
 
@@ -12,6 +24,7 @@ export interface DecodedToken {
   email: string;
   role: UserRole;
   avatarUrl?: string;
+  sessionVersion?: number;
   iat: number;
   exp: number;
 }
@@ -25,6 +38,7 @@ export function signToken(user: {
   email: string;
   role: UserRole;
   avatarUrl?: string;
+  sessionVersion?: number;
 }): string {
   return jwt.sign(
     {
@@ -33,8 +47,9 @@ export function signToken(user: {
       email: user.email,
       role: user.role,
       avatarUrl: user.avatarUrl || "",
+      sessionVersion: user.sessionVersion ?? 0,
     },
-    JWT_SECRET,
+    getJwtSecret(),
     { expiresIn: TOKEN_EXPIRY }
   );
 }
@@ -44,8 +59,8 @@ export function signToken(user: {
  */
 export function verifyToken(token: string): DecodedToken | null {
   try {
-    return jwt.verify(token, JWT_SECRET) as DecodedToken;
-  } catch (error) {
+    return jwt.verify(token, getJwtSecret()) as DecodedToken;
+  } catch {
     return null;
   }
 }
@@ -75,21 +90,29 @@ export async function clearAuthCookie() {
 /**
  * Retrieves the current authenticated session on the server.
  */
-export async function getSession(): Promise<UserSession | null> {
+export const getSession = cache(async (): Promise<UserSession | null> => {
   const cookieStore = await cookies();
   const token = cookieStore.get(AUTH_COOKIE_NAME)?.value;
 
   if (!token) return null;
 
   const decoded = verifyToken(token);
-  if (!decoded) return null;
+  if (!decoded || !isObjectIdOrHexString(decoded.id)) return null;
 
-  return {
-    id: decoded.id,
-    name: decoded.name,
-    email: decoded.email,
-    role: decoded.role,
-    avatarUrl: decoded.avatarUrl,
-  };
-}
+  try {
+    await connectDB();
+    const user = await User.findOne({ _id: decoded.id, deactivatedAt: null })
+      .select("name email role avatarUrl sessionVersion").lean();
+    if (!user || (user.sessionVersion ?? 0) !== (decoded.sessionVersion ?? 0)) return null;
 
+    return {
+      id: user._id.toString(),
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      avatarUrl: user.avatarUrl,
+    };
+  } catch {
+    return null;
+  }
+});

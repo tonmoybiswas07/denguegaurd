@@ -82,18 +82,18 @@ export default function AdminDashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-5 rounded-3xl bg-indigo-950 p-6 text-white sm:flex-row sm:items-center sm:p-8">
         <div>
-          <Badge variant="destructive">SYSTEM ADMINISTRATION</Badge>
-          <h1 className="text-2xl sm:text-3xl font-black text-[#0f2744] mt-1">
-            DengueGuard Administrator Command Center
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">
+            Administration
           </h1>
-          <p className="text-xs sm:text-sm text-slate-500">
-            System overview, clinical credential verifications, hospital resource oversight, and compliance audit trail.
+          <p className="mt-2 text-sm text-indigo-100">
+            Review activity, verify doctors, and manage patient and doctor accounts.
           </p>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <a href="/admin/accounts" className="inline-flex min-h-10 items-center rounded-xl bg-indigo-100 px-4 text-sm font-semibold text-indigo-950 hover:bg-white">Manage accounts</a>
           <Button
             size="sm"
             variant="outline"
@@ -104,6 +104,7 @@ export default function AdminDashboardPage() {
             <span>Refresh</span>
           </Button>
 
+          {process.env.NODE_ENV !== "production" && (
           <Button
             size="sm"
             onClick={handleSeedDatabase}
@@ -112,6 +113,7 @@ export default function AdminDashboardPage() {
             <Database className="w-3.5 h-3.5 text-teal-400" />
             <span>Initialize Seed DB</span>
           </Button>
+          )}
         </div>
       </div>
 

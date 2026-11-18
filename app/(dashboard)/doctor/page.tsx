@@ -8,22 +8,17 @@ import {
   XCircle,
   Clock,
   User,
-  Activity,
   FileText,
   AlertTriangle,
   Send,
   Eye,
-  ShieldCheck,
-  ChevronRight,
 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 
 export default function DoctorDashboardPage() {
   const [appointments, setAppointments] = useState<any[]>([]);
-  const [selectedPatientRecords, setSelectedPatientRecords] = useState<any | null>(null);
-  const [inspectModalOpen, setInspectModalOpen] = useState(false);
   const [notesModalAppointment, setNotesModalAppointment] = useState<any | null>(null);
   const [doctorNoteInput, setDoctorNoteInput] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -83,19 +78,6 @@ export default function DoctorDashboardPage() {
     }
   };
 
-  const inspectPatient = async (patientId: string) => {
-    try {
-      const res = await fetch(`/api/doctor/patients/${patientId}/records`);
-      const data = await res.json();
-      if (data.success) {
-        setSelectedPatientRecords(data.data);
-        setInspectModalOpen(true);
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const pendingCount = appointments.filter((a) => a.status === "pending").length;
   const confirmedCount = appointments.filter((a) => a.status === "confirmed").length;
   const completedCount = appointments.filter((a) => a.status === "completed").length;
@@ -103,21 +85,17 @@ export default function DoctorDashboardPage() {
   return (
     <div className="space-y-8 max-w-7xl mx-auto">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="flex flex-col justify-between gap-5 rounded-2xl border border-sky-200 border-l-4 border-l-sky-700 bg-white p-6 sm:flex-row sm:items-center sm:p-8">
         <div>
-          <Badge variant="navy">CLINICIAN DESK</Badge>
           <h1 className="text-2xl sm:text-3xl font-black text-[#0f2744] mt-1">
-            Doctor Clinical Consultation Console
+            Consultation desk
           </h1>
           <p className="text-xs sm:text-sm text-slate-500">
-            Review patient triage summaries, evaluate daily CBC platelet progressions, and deliver follow-up guidance.
+            Manage appointments, review patient records, and record follow-up notes.
           </p>
         </div>
 
-        <div className="p-2.5 rounded-xl bg-teal-50 border border-teal-200 text-teal-800 text-xs font-semibold flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-teal-600" />
-          <span>BMDC Verified Practitioner</span>
-        </div>
+        <a href="/doctor/patients" className="inline-flex min-h-11 shrink-0 items-center self-start rounded-lg bg-sky-800 px-4 text-sm font-semibold text-white hover:bg-sky-900 sm:self-auto">Authorized patients</a>
       </div>
 
       {/* KPI Stats */}
@@ -202,16 +180,15 @@ export default function DoctorDashboardPage() {
                       {app.status}
                     </Badge>
 
-                    {/* View Records Button */}
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => inspectPatient(app.patientId?._id)}
-                      className="text-xs gap-1.5 h-8 border-slate-300"
-                    >
-                      <Eye className="w-3.5 h-3.5 text-teal-600" />
-                      <span>View CBC Records</span>
-                    </Button>
+                    {app.status === "confirmed" && app.patientId?._id && (
+                      <a
+                        href={`/doctor/patients/${app.patientId._id}`}
+                        className={`${buttonVariants({ variant: "outline", size: "sm" })} gap-1.5`}
+                      >
+                        <Eye aria-hidden="true" className="size-3.5 text-teal-600" />
+                        View patient details
+                      </a>
+                    )}
                   </div>
                 </div>
 
@@ -283,86 +260,6 @@ export default function DoctorDashboardPage() {
           </div>
         )}
       </Card>
-
-      {/* INSPECT PATIENT CBC RECORDS MODAL */}
-      {inspectModalOpen && selectedPatientRecords && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <div>
-                <Badge variant="teal">CLINICAL AUDIT VIEW</Badge>
-                <h3 className="text-base font-bold text-[#0f2744] mt-1">
-                  Patient Records: {selectedPatientRecords.patient?.name}
-                </h3>
-              </div>
-              <button
-                onClick={() => setInspectModalOpen(false)}
-                className="text-slate-400 hover:text-slate-700 text-lg font-bold p-1"
-              >
-                ×
-              </button>
-            </div>
-
-            <div className="grid grid-cols-3 gap-3 p-3 rounded-xl bg-slate-50 text-xs">
-              <div>
-                <span className="text-slate-400 block text-[11px]">Email:</span>
-                <span className="font-semibold text-slate-800">{selectedPatientRecords.patient?.email}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[11px]">Blood Group:</span>
-                <span className="font-semibold text-red-600">{selectedPatientRecords.profile?.bloodGroup || "O+"}</span>
-              </div>
-              <div>
-                <span className="text-slate-400 block text-[11px]">District:</span>
-                <span className="font-semibold text-slate-800">{selectedPatientRecords.profile?.district || "Dhaka"}</span>
-              </div>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-bold text-sm text-[#0f2744]">
-                Complete Blood Count (CBC) Progression:
-              </h4>
-
-              <div className="overflow-x-auto border border-slate-200 rounded-xl">
-                <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-50 text-slate-600 uppercase border-b border-slate-200">
-                    <tr>
-                      <th className="py-2.5 px-3">Date</th>
-                      <th className="py-2.5 px-3">Temp (°F)</th>
-                      <th className="py-2.5 px-3">Platelet (/μL)</th>
-                      <th className="py-2.5 px-3">Hematocrit (%)</th>
-                      <th className="py-2.5 px-3">Notes</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-100">
-                    {selectedPatientRecords.records.map((r: any, i: number) => (
-                      <tr key={i}>
-                        <td className="py-2.5 px-3 text-slate-600">
-                          {new Date(r.recordDate).toLocaleDateString()}
-                        </td>
-                        <td className="py-2.5 px-3 font-bold text-red-600">
-                          {r.temperature}°F
-                        </td>
-                        <td className="py-2.5 px-3 font-bold text-teal-700">
-                          {r.plateletCount.toLocaleString()}/μL
-                        </td>
-                        <td className="py-2.5 px-3 font-mono">{r.hematocrit || "—"}%</td>
-                        <td className="py-2.5 px-3 text-slate-500">{r.notes || "—"}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-            <div className="pt-2 flex justify-end">
-              <Button onClick={() => setInspectModalOpen(false)} variant="outline" size="sm">
-                Close Record View
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ADD INSTRUCTIONS MODAL */}
       {notesModalAppointment && (

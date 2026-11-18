@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { runSecurityAndLogicTests } from "@/lib/test-suite";
 
 export async function GET() {
+  if (process.env.NODE_ENV === "production") {
+    return NextResponse.json({ success: false, error: "Not found." }, { status: 404 });
+  }
+
   const results = await runSecurityAndLogicTests();
   const allPassed = results.every((r) => r.status === "PASSED");
 
