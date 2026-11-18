@@ -58,7 +58,7 @@ export default function DashboardSidebar({
     { label: "Command Center", href: "/admin", icon: BarChart3 },
     { label: "Doctor Verifications", href: "/admin/doctors", icon: Stethoscope },
     { label: "Dengue Case Reports", href: "/admin/reports", icon: AlertTriangle },
-    { label: "Hospitals & Donors", href: "/admin/management", icon: Hospital },
+    { label: "Donor verification", href: "/admin/management", icon: Hospital },
     { label: "Audit & Security Logs", href: "/admin/audit-logs", icon: FolderLock },
   ];
 

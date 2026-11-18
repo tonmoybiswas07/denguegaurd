@@ -1,24 +1,25 @@
 "use client";
 
-import React, { useState } from "react";
+import { Suspense, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import dynamic from "next/dynamic";
 import {
   Hospital as HospitalIcon,
   Search,
-  Filter,
   PhoneCall,
   MapPin,
   CheckCircle2,
-  AlertCircle,
   Building2,
   Bed,
   HeartPulse,
 } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { BANGLADESH_DISTRICTS } from "@/lib/constants";
-import { MOCK_HOSPITALS, type HospitalItem } from "@/lib/data/mockData";
+import type { HospitalItem } from "@/lib/data/mockData";
+import { useDirectory } from "@/lib/data/useDirectory";
+import DirectoryStatus from "@/components/common/DirectoryStatus";
 
 // Dynamically import Leaflet Hospital Map with SSR disabled
 const HospitalMap = dynamic(() => import("@/components/maps/HospitalMap"), {
@@ -34,17 +35,30 @@ const HospitalMap = dynamic(() => import("@/components/maps/HospitalMap"), {
 });
 
 export default function HospitalsPage() {
-  const [searchTerm, setSearchTerm] = useState("");
+  return (
+    <Suspense fallback={<p role="status" className="mx-auto max-w-7xl p-8">Loading hospital search…</p>}>
+      <HospitalDirectory />
+    </Suspense>
+  );
+}
+
+function HospitalDirectory() {
+  const initialSearch = useSearchParams().get("q") ?? "";
+  return <HospitalResults key={initialSearch} initialSearch={initialSearch} />;
+}
+
+function HospitalResults({ initialSearch }: { initialSearch: string }) {
+  const directory = useDirectory<HospitalItem>("/api/hospitals");
+  const [searchTerm, setSearchTerm] = useState(initialSearch);
   const [selectedDistrict, setSelectedDistrict] = useState("All");
-  const [filterType, setFilterType] = useState<"All" | "Government" | "Private">("All");
+  const [filterType, setFilterType] = useState("All");
   const [onlyAvailableBeds, setOnlyAvailableBeds] = useState(false);
   const [selectedHospital, setSelectedHospital] = useState<HospitalItem | null>(null);
 
-  const filteredHospitals = MOCK_HOSPITALS.filter((h) => {
+  const query = searchTerm.trim().toLowerCase();
+  const filteredHospitals = directory.items.filter((h) => {
     const matchesSearch =
-      h.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      h.area.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      h.district.toLowerCase().includes(searchTerm.toLowerCase());
+      [h.name, h.area, h.district, h.address].some((value) => value.toLowerCase().includes(query));
 
     const matchesDistrict =
       selectedDistrict === "All" || h.district.toLowerCase() === selectedDistrict.toLowerCase();
@@ -62,13 +76,13 @@ export default function HospitalsPage() {
       <div className="space-y-3 max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-semibold">
           <HospitalIcon className="w-3.5 h-3.5 text-teal-600" />
-          <span>Real-time Clinical Resource Directory</span>
+          <span>Hospital directory</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0f2744] tracking-tight">
-          Verified Dengue Hospital & ICU Bed Locator
+          Find dengue care near you
         </h1>
         <p className="text-slate-600 text-base leading-relaxed">
-          Search accredited medical facilities with dedicated dengue wards, emergency triage units, and real-time bed and ICU availability across Bangladesh.
+          Search hospitals by location and compare listed dengue and ICU beds. Call the facility to confirm availability before travelling.
         </p>
       </div>
 
@@ -77,22 +91,24 @@ export default function HospitalsPage() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5">
           {/* Text Search */}
           <div className="md:col-span-5 relative">
-            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+            <Search aria-hidden="true" className="w-4 h-4 text-slate-400 absolute left-3.5 top-4" />
             <input
-              type="text"
-              placeholder="Search by hospital name, area, or road..."
+              type="search"
+              aria-label="Search hospitals"
+              placeholder="Search by hospital, area, or district"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600"
+              className="w-full pl-10 pr-4 py-3 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600"
             />
           </div>
 
           {/* District Select */}
           <div className="md:col-span-4">
             <select
+              aria-label="District"
               value={selectedDistrict}
               onChange={(e) => setSelectedDistrict(e.target.value)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+              className="w-full px-3 py-3 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             >
               <option value="All">All Districts</option>
               {BANGLADESH_DISTRICTS.map((d) => (
@@ -106,13 +122,15 @@ export default function HospitalsPage() {
           {/* Hospital Type */}
           <div className="md:col-span-3">
             <select
+              aria-label="Hospital type"
               value={filterType}
-              onChange={(e) => setFilterType(e.target.value as any)}
-              className="w-full px-3 py-2 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
+              onChange={(e) => setFilterType(e.target.value)}
+              className="w-full px-3 py-3 text-sm rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-600 bg-white"
             >
               <option value="All">All Hospital Types</option>
               <option value="Government">Government Hospitals</option>
               <option value="Private">Private Hospitals</option>
+              <option value="Specialized">Specialized Hospitals</option>
             </select>
           </div>
         </div>
@@ -126,33 +144,34 @@ export default function HospitalsPage() {
               onChange={(e) => setOnlyAvailableBeds(e.target.checked)}
               className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
             />
-            <span>Show only hospitals with currently available dengue beds</span>
+            <span>Only facilities listing available dengue beds</span>
           </label>
 
           <span className="text-slate-500">
-            Showing <strong>{filteredHospitals.length}</strong> verified facilities
+            {directory.source && <>Showing <strong>{filteredHospitals.length}</strong> {directory.source === "demo" ? "sample" : "verified"} facilities</>}
           </span>
         </div>
       </div>
 
-      {/* Interactive Leaflet Map Component */}
-      <section className="space-y-3">
+      <DirectoryStatus {...directory} />
+
+      {filteredHospitals.length > 0 && <section id="hospital-map" tabIndex={-1} className="scroll-mt-24 space-y-3">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-bold text-[#0f2744] flex items-center gap-2">
             <MapPin className="w-5 h-5 text-teal-600" />
             <span>Geographic Facility Distribution</span>
           </h3>
-          <span className="text-xs text-slate-500">Click any pin to inspect bed status</span>
+          <span className="text-xs text-slate-500">Select a pin to view facility details</span>
         </div>
         <HospitalMap
           hospitals={filteredHospitals}
-          selectedHospital={selectedHospital}
-          onSelectHospital={(h) => setSelectedHospital(h)}
+          selectedHospital={filteredHospitals.find((hospital) => hospital.id === selectedHospital?.id) ?? null}
+          showPhone={directory.source === "registry"}
         />
-      </section>
+      </section>}
 
       {/* Hospital Cards Grid */}
-      <section className="space-y-4">
+      {!directory.loading && !directory.error && <section className="space-y-4">
         <h3 className="text-lg font-bold text-[#0f2744]">
           Hospital Directory Listings
         </h3>
@@ -164,6 +183,12 @@ export default function HospitalsPage() {
             <p className="text-xs text-slate-500">
               Try adjusting your district filter or search query.
             </p>
+            <Button variant="outline" onClick={() => {
+              setSearchTerm("");
+              setSelectedDistrict("All");
+              setFilterType("All");
+              setOnlyAvailableBeds(false);
+            }}>Clear filters</Button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -172,8 +197,7 @@ export default function HospitalsPage() {
               return (
                 <Card
                   key={hospital.id}
-                  onClick={() => setSelectedHospital(hospital)}
-                  className={`p-5 flex flex-col justify-between cursor-pointer transition-all ${
+                  className={`p-5 flex flex-col justify-between transition-all ${
                     isSelected
                       ? "ring-2 ring-teal-600 shadow-md border-transparent"
                       : "hover:border-teal-300"
@@ -185,7 +209,7 @@ export default function HospitalsPage() {
                         {hospital.type}
                       </Badge>
                       <div className="flex items-center gap-1.5">
-                        {hospital.isVerified && (
+                        {directory.source === "registry" && hospital.isVerified && (
                           <span className="inline-flex items-center gap-1 text-[10px] font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded border border-teal-200">
                             <CheckCircle2 className="w-3 h-3 text-teal-600" />
                             Verified
@@ -234,20 +258,24 @@ export default function HospitalsPage() {
                   </div>
 
                   <div className="pt-4 mt-3 border-t border-slate-100 flex items-center gap-2">
-                    <a
+                    <Button variant="outline" size="sm" aria-pressed={isSelected} onClick={() => {
+                      setSelectedHospital(hospital);
+                      document.getElementById("hospital-map")?.focus();
+                    }}>Show on map</Button>
+                    {directory.source === "registry" && <a
                       href={`tel:${hospital.emergencyPhone}`}
                       className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 text-xs font-semibold rounded-lg bg-[#0f2744] hover:bg-[#16365c] text-white transition-colors"
                     >
                       <PhoneCall className="w-3.5 h-3.5 text-teal-400" />
-                      <span>Emergency Hotline: {hospital.emergencyPhone}</span>
-                    </a>
+                      <span>Call hospital</span>
+                    </a>}
                   </div>
                 </Card>
               );
             })}
           </div>
         )}
-      </section>
+      </section>}
     </div>
   );
 }

@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "DengueGuard – Smart Dengue Prevention & Management System",
   description:
-    "A comprehensive healthcare intelligence platform providing real-time dengue surveillance, clinical symptom triage, hospital & blood donor matching, and patient health tracking.",
+    "Find dengue care resources in Bangladesh, check symptoms, browse hospital and donor directories, and track patient health records.",
   keywords: [
     "Dengue",
     "Healthcare",

@@ -10,6 +10,9 @@ export default function PublicLayout({
 }) {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 text-slate-900">
+      <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3">
+        Skip to main content
+      </a>
       {/* Top Advisory Banner with Emergency Hotlines */}
       <EmergencyBanner />
 
@@ -17,7 +20,7 @@ export default function PublicLayout({
       <Navbar />
 
       {/* Main Public Content */}
-      <main className="flex-1 w-full">{children}</main>
+      <main id="main-content" tabIndex={-1} className="flex-1 w-full">{children}</main>
 
       {/* Comprehensive Public Healthcare Footer */}
       <Footer />

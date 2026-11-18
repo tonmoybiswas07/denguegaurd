@@ -51,13 +51,13 @@ export default function StatisticsPage() {
       <div className="space-y-4 max-w-3xl">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-teal-50 border border-teal-200 text-teal-800 text-xs font-semibold">
           <BarChart3 className="w-3.5 h-3.5 text-teal-600" />
-          <span>Epidemiological Intelligence & Surveillance</span>
+          <span>Demo dataset</span>
         </div>
         <h1 className="text-3xl sm:text-5xl font-extrabold text-[#0f2744] tracking-tight">
-          National Dengue Statistics & Clinical Trends
+          Dengue statistics and trends
         </h1>
         <p className="text-slate-600 text-base leading-relaxed">
-          Surveillance intelligence aggregating clinical admissions, district distribution, and hemodynamic progression patterns.
+          Explore sample charts for admissions, district comparisons, and clinical trends.
         </p>
       </div>
 

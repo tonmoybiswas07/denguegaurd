@@ -1,22 +1,23 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
+import type { Map, Marker } from "leaflet";
 import type { HospitalItem } from "@/lib/data/mockData";
 
 interface HospitalMapProps {
   hospitals: HospitalItem[];
   selectedHospital?: HospitalItem | null;
-  onSelectHospital?: (hospital: HospitalItem) => void;
+  showPhone: boolean;
 }
 
 export default function HospitalMap({
   hospitals,
   selectedHospital,
-  onSelectHospital,
+  showPhone,
 }: HospitalMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<any>(null);
-  const markersRef = useRef<any[]>([]);
+  const mapInstanceRef = useRef<Map | null>(null);
+  const markersRef = useRef<Marker[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -81,63 +82,43 @@ export default function HospitalMap({
         });
       };
 
+      if (selectedHospital && Number.isFinite(selectedHospital.lat) && Number.isFinite(selectedHospital.lng)) {
+        map.setView([selectedHospital.lat, selectedHospital.lng], 13, { animate: false });
+      }
+
       // Add markers for hospitals
       hospitals.forEach((hospital) => {
+        if (!Number.isFinite(hospital.lat) || !Number.isFinite(hospital.lng)) return;
         const isSelected = selectedHospital?.id === hospital.id;
         const icon = createCustomIcon(isSelected, hospital.availableDengueBeds);
 
         const marker = L.marker([hospital.lat, hospital.lng], { icon }).addTo(map);
 
-        const popupContent = `
-          <div style="font-family: inherit; font-size: 12px; min-width: 180px; padding: 4px;">
-            <div style="font-weight: 700; color: #0f2744; font-size: 13px; margin-bottom: 2px;">
-              ${hospital.name}
-            </div>
-            <div style="color: #64748b; margin-bottom: 6px;">
-              ${hospital.area}, ${hospital.district}
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
-              <span>Dengue Beds:</span>
-              <strong style="color: ${hospital.availableDengueBeds > 0 ? "#0d9488" : "#dc2626"};">
-                ${hospital.availableDengueBeds} Available
-              </strong>
-            </div>
-            <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
-              <span>ICU Beds:</span>
-              <strong>${hospital.icuAvailable} of ${hospital.icuTotal}</strong>
-            </div>
-            <a href="tel:${hospital.emergencyPhone}" style="
-              display: inline-block;
-              width: 100%;
-              text-align: center;
-              background-color: #0f2744;
-              color: white;
-              padding: 4px 8px;
-              border-radius: 4px;
-              text-decoration: none;
-              font-weight: 600;
-              margin-top: 4px;
-            ">
-              Emergency: ${hospital.emergencyPhone}
-            </a>
-          </div>
-        `;
+        const popup = document.createElement("div");
+        popup.className = "space-y-1 text-sm";
+        const name = document.createElement("strong");
+        name.textContent = hospital.name;
+        const area = document.createElement("div");
+        area.textContent = `${hospital.area}, ${hospital.district}`;
+        const beds = document.createElement("div");
+        beds.textContent = `Listed beds: ${hospital.availableDengueBeds} dengue · ${hospital.icuAvailable} ICU`;
+        popup.append(name, area, beds);
+        if (showPhone && hospital.emergencyPhone) {
+          const phone = document.createElement("a");
+          phone.href = `tel:${hospital.emergencyPhone}`;
+          phone.textContent = "Call hospital";
+          popup.append(phone);
+        }
 
-        marker.bindPopup(popupContent);
-
-        marker.on("click", () => {
-          if (onSelectHospital) {
-            onSelectHospital(hospital);
-          }
-        });
-
+        marker.bindPopup(popup);
+        if (isSelected) marker.openPopup();
         markersRef.current.push(marker);
       });
 
-      // Fly to selected hospital if chosen
-      if (selectedHospital) {
-        map.flyTo([selectedHospital.lat, selectedHospital.lng], 13, {
-          duration: 1.2,
+      if (!selectedHospital && markersRef.current.length) {
+        map.fitBounds(L.latLngBounds(markersRef.current.map((marker) => marker.getLatLng())), {
+          maxZoom: 12,
+          padding: [24, 24],
         });
       }
     });
@@ -145,7 +126,7 @@ export default function HospitalMap({
     return () => {
       isMounted = false;
     };
-  }, [hospitals, selectedHospital, onSelectHospital]);
+  }, [hospitals, selectedHospital, showPhone]);
 
   // Clean up on component unmount
   useEffect(() => {
@@ -168,7 +149,7 @@ export default function HospitalMap({
         </div>
         <div className="flex items-center gap-2">
           <span className="w-3 h-3 rounded-full bg-rose-600"></span>
-          <span>Critical / Low Beds</span>
+          <span>20 or fewer dengue beds</span>
         </div>
       </div>
     </div>
